@@ -23,35 +23,6 @@
     </button>
   </div>
 
-  <!-- The Modal -->
-  <div id="myModal" class="modal">
-    <!-- Modal content -->
-    <div class="modal-content">
-      <span class="close">&times;</span>
-      <label for="noteForSavedTrack">Enter a note if you would like (not needed):</label>
-      <div>
-        <textarea multiline placeholder="ex: bin ek naam at 10:00" id="noteForSavedTrack"></textarea>
-      </div>
-      <div>
-        <button onclick="saveTrack()">Save</button>
-      </div>
-    </div>
-  </div>
-
-  <!--
-      <div class="forSearch">
-        <div>
-          <h2>Search for Track:</h2>
-          <input
-            placeholder="Bin Ek Naam"
-            id="searchInput"
-            oninput="searchForShabad(this.value)"
-          />
-        </div>
-        <ol id="searchResults"></ol>
-      </div>
-    -->
-
   <div id="optionMenu" class="modaal">
     <div class="modal-content">
       <input checked type="checkbox" id="adiAKJ" name="adiAKJ" onclick="excludeOrIncludeTracks()" />
@@ -60,18 +31,16 @@
       <input checked type="checkbox" id="adiPaathBodh" name="adiPaathBodh" onclick="excludeOrIncludeTracks()" />
       <label for="adiPaathBodh">2016 Gurdwara Dukh Nivaran Patiala Paath Adi Guru Granth Sahib Ji Bodh Samagam</label>
       <br />
-      <input checked type="checkbox" id="dasamPaath" name="dasamPaath" onclick="excludeOrIncludeTracks()" />
-      <label for="dasamPaath">Bhai Onkar Singh Ji Sri Dasam Mahraj Bani</label>
-
+      <input checked type="checkbox" id="dasamOnkarSingh" name="dasamOnkarSingh" onclick="excludeOrIncludeTracks()" />
+      <label for="dasamOnkarSingh">Bhai Onkar Singh Ji Sri Dasam Mahraj Bani</label>
+      <br />
+      <input checked type="checkbox" id="dasamKabaalSingh" name="dasamKabaalSingh" onclick="excludeOrIncludeTracks()" />
+      <label for="dasamKabaalSingh">Bhai Kabaal Singh Ji (Hazoor Sahib wale)</label>
     </div>
   </div>
 
-  <!--
-      <div>
-        <button onclick="toggleSavedTracks()">Toggle Saved Tracks</button>
-        <ol id="savedShabads"></ol>
-      </div>
-    -->
+    <button onclick="toggleShowingTracks()">Show All Tracks (Toggle)</button>
+    <div id="showAllTracks"></div>
 </body>
 <script>
   let TRACK_LINKS = [
@@ -79,52 +48,53 @@
     ...patiala_dukh_nivaran_paath_bodh_2016_links,
     ...bhai_onkar_singhji_dasam_paath_links,
   ];
-  let TRACK_NAMES = [
-    ...bhai_mohan_singhji_adi_mahraj_names,
-    ...patiala_dukh_nivaran_paath_bodh_2016_names,
-    ...bhai_onkar_singhji_dasam_paath_names,
-  ]
 
   const ALL_OPTS = {
     "adiAKJ":{
       checked: true,
-      trackNames: bhai_mohan_singhji_adi_mahraj_names,
       trackLinks: bhai_mohan_singhji_adi_mahraj_links,
     },
     "adiPaathBodh": {
       checked: true,
-      trackNames: patiala_dukh_nivaran_paath_bodh_2016_names,
       trackLinks: patiala_dukh_nivaran_paath_bodh_2016_links,
-    }, "dasamPaath": {
+    }, "dasamOnkarSingh": {
       checked: true,
-      trackNames: bhai_onkar_singhji_dasam_paath_names,
       trackLinks: bhai_onkar_singhji_dasam_paath_links,
+    }, "dasamKabaalSingh": {
+      checked: true,
+      trackLinks: kabaal_singh_dasam,
     }
   };
 
   function excludeOrIncludeTracks() {
     let newLinks = []
-    let newNames = []
     for (const opt in ALL_OPTS) {
       const val = document.getElementById(opt).checked;
       ALL_OPTS[opt].checked = val
       if(val){
-        newNames.push(...ALL_OPTS[opt].trackNames)
         newLinks.push(...ALL_OPTS[opt].trackLinks)
-      }else{
-        const lenOfTracksInOpt=ALL_OPTS[opt].trackNames.length //could have been trackLinks too. both are same length
-        for (let i=0;i<lenOfTracksInOpt;i++){
-          newLinks.push('_')
-          newNames.push('_')
-        }
       }
     }
-    console.log(newLinks)
-    console.log(newNames)
     TRACK_LINKS=[...newLinks]
-    TRACK_NAMES=[...newNames]
-    // console.log(TRACK_LINKS)
   }
+
+  function toggleShowingTracks(){
+    const theDiv = document.getElementById("showAllTracks")
+    if(theDiv.innerHTML === ""){
+      theDiv.innerHTML=`<h5>There are ${TRACK_LINKS.length} tracks</h5>`
+      const ol = document.createElement('ol')
+      for(const link of TRACK_LINKS){
+        const li = document.createElement('li')
+        li.innerHTML+=`<a href='${link}'>${getNameOfTrack(link)}</a>`
+        ol.appendChild(li)
+      }
+      theDiv.appendChild(ol)
+    }else{
+      theDiv.innerHTML=''
+    }
+  }
+
+  function getNameOfTrack(link){return link.split('/').slice(-1)[0]}
 </script>
 <script type="text/javascript" src="./scripts.js"></script>
 
